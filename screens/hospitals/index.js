@@ -8,115 +8,26 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import FIcon from 'react-native-vector-icons/FontAwesome';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import * as Location from 'expo-location';
-import { hospitals } from '../../hospital';
+import { hospitals, zones } from '../../hospital';
 
 const Hospitals = (props) => {
-    console.log('props==>', props.navigation);
+    // console.log('props==>', props.navigation);
     const [state, setState] = useState({
         search: '',
-        filteredHospitals: []
+        filteredHospitals: [],
+        seletedHospital: '',
+        filteredZone: []
     });
     const [loading, setLoader] = useState(false);
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
+    const [showZone, setShowZone] = useState(false);
+    const [showHospital, setShowHospital] = useState(false);
 
     useEffect(() => {
         setLoader(true);
         setTimeout(() => {
             setLoader(false);
         }, 1500);
-        // (async () => {
-        //     let { status } = await Location.requestPermissionsAsync();
-        //     if (status !== 'granted') {
-        //         setErrorMsg('Permission to access location was denied');
-        //     }
-
-        //     let location = await Location.getCurrentPositionAsync({});
-        //     setLocation(location);
-        // })();
     }, []);
-
-    let text = 'Waiting..';
-    if (errorMsg) {
-        text = errorMsg;
-    } else if (location) {
-        console.log("=Location", location.coords);
-        text = JSON.stringify(location);
-    }
-
-
-    function closestLocation(targetLocation, locationData) {
-        function vectorDistance(dx, dy) {
-            return Math.sqrt(dx * dx + dy * dy);
-        }
-
-        function locationDistance(location1, location2) {
-            var dx = location1.latitude - location2.latitude,
-                dy = location1.longitude - location2.longitude;
-
-            return vectorDistance(dx, dy);
-        }
-
-        return locationData.reduce(function (prev, curr) {
-            var prevDistance = locationDistance(targetLocation, prev),
-                currDistance = locationDistance(targetLocation, curr);
-            return (prevDistance < currDistance) ? prev : curr;
-        });
-    }
-
-    // var data = {
-    //     "Locations": {
-    //         "Location": [
-    //             {
-    //             "id": "3066",
-    //             "latitude": "57.6494",
-    //             "longitude": "-3.5606",
-    //             "name": "Kinloss"},
-    //         {
-    //             "id": "3080",
-    //             "latitude": "57.077",
-    //             "longitude": "-2.836",
-    //             "name": "Aboyne"},
-    //         {
-    //             "id": "3091",
-    //             "latitude": "57.206",
-    //             "longitude": "-2.202",
-    //             "name": "Aberdeen Dyce"},
-    //         {
-    //             "id": "3134",
-    //             "latitude": "55.907",
-    //             "longitude": "-4.533",
-    //             "name": "Glasgow/Bishopton"},
-    //         {
-    //             "id": "3136",
-    //             "latitude": "55.515",
-    //             "longitude": "-4.585",
-    //             "name": "Prestwick Rnas"},
-    //         {
-    //             "id": "3144",
-    //             "latitude": "56.326",
-    //             "longitude": "-3.729",
-    //             "name": "Strathallan"},
-    //             {
-    //                 "id": "3149",
-    //                 "latitude": "24.9695181",
-    //                 "longitude": "66.9628732",
-    //                 "name": "My Home"},
-    //                 {
-    //                     "id": "3199",
-    //                     "latitude": "24.9756451",
-    //                     "longitude": "66.9921975",
-    //                     "name": "Arkania"},
-    //         ]
-    //     }
-    // },
-    //     targetLocation = {
-    //         latitude: 24.9695181,
-    //         longitude: 66.9628732
-    //     },
-    //     closest = closestLocation(targetLocation, data.Locations.Location);
-    // // closest is now the location that is closest to the target location
-    // console.log('closet =========>>>>>',closest);
 
     const sortList = (list) => {
         const sortedList = list.sort(function (a, b) {
@@ -131,14 +42,44 @@ const Hospitals = (props) => {
         return sortedList;
     }
 
-    const searchHospital = () => {
-        console.log('Hospitals_List', hospitals)
+    const filterZone = (text) => {
+        console.log('tetx', text)
+        setShowZone(true)
+        if (text) {
+            let filteredZone = zones.filter(data => {
+                if (data.toLowerCase().includes(text.toLowerCase()) === true) return data;
+            });
+            filteredZone = filteredZone.sort(function (a, b) {
+                if (a < b) {
+                    return -1;
+                }
+                if (b > a) {
+                    return 1;
+                }
+                return 0;
+            });
+            setState({ ...state, filteredZone, search: text })
+            console.log('filter zone', filteredZone);
+        } else {
+            setState({ ...state, search: text, filteredZone: [] })
+        }
+    }
+
+    const selectZone = (text) => {
+        console.log('=>', text);
+        setState({ ...state, seletedHospital: text });
+        searchHospital(text);
+    }
+
+    const searchHospital = (seletedHospital) => {
+        console.log('Hospitals_List', seletedHospital)
         setLoader(true);
+        setShowZone(false);
         setTimeout(() => {
             setLoader(false);
         }, 1500);
         let filteredHospitals = hospitals.filter(data => {
-            if (data.tag.toLowerCase().includes(state.search.toLowerCase()) === true) return data;
+            if (data.tag.toLowerCase().includes(seletedHospital.toLowerCase()) === true) return data;
         });
         filteredHospitals = sortList(filteredHospitals);
         setState({ ...state, filteredHospitals })
@@ -149,7 +90,8 @@ const Hospitals = (props) => {
         props.navigation.push('Details', { details: data })
     }
 
-    const list = state.filteredHospitals.length > 0 ? state.filteredHospitals : sortList(hospitals);
+    // const list = state.filteredHospitals.length > 0 ? state.filteredHospitals : sortList(hospitals);
+    const list = state.filteredHospitals;
 
     return (
         <View style={styles.formView}>
@@ -160,10 +102,11 @@ const Hospitals = (props) => {
                 centerComponent={{ text: 'Hospitals', style: styles.titleStye }}
                 containerStyle={styles.headerContainer}
             />
-            <View style={{ flexDirection: 'row', backgroundColor: 'white' }}>
+            {/* <View style={{ flexDirection: 'row', backgroundColor: 'white' }}>
                 <SearchBar
                     placeholder="Type Location here..."
-                    onChangeText={(text) => setState({ ...state, search: text })}
+                    // onChangeText={(text) => setState({ ...state, search: text })}
+                    onChangeText={(text) => filterZone(text)}
                     value={state.search}
                     onClear={() => setState({ ...state, search: '', filteredHospitals: [] })}
                     inputContainerStyle={{ backgroundColor: '#2d3436' }}
@@ -179,9 +122,34 @@ const Hospitals = (props) => {
                     // disabled={state.search ? false : true}
                     containerStyle={{ width: '20%', backgroundColor: '#2d3436', borderRadius: 0 }}
                 />
-            </View>
+            </View> */}
+            <SearchBar
+                placeholder="Type Location here..."
+                // onChangeText={(text) => setState({ ...state, search: text })}
+                onChangeText={(text) => filterZone(text)}
+                value={state.seletedHospital ? state.seletedHospital : state.search}
+                onClear={() => setState({ ...state, search: '', filteredHospitals: [], filteredZone: [] })}
+                inputContainerStyle={{ backgroundColor: '#2d3436' }}
+                onSubmitEditing={() => searchHospital()}
+                inputStyle={{ color: '#01C397' }}
+                containerStyle={{ backgroundColor: '#2d3436', borderColor: 'red', padding: 0, borderRadius: 0 }}
+            />
             {
-                loading ?
+                showZone &&
+                <ScrollView>
+                    {state.filteredZone.map((l, i) => (
+                        <TouchableOpacity onPress={() => selectZone(l)} key={i} style={styles.listItem}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <SimpleIcon name='location-pin' style={styles.hospitalIcon} />
+                                <Text style={styles.listTitle}>{l}</Text>
+                            </View>
+                            <SimpleIcon name='arrow-right' style={styles.arrowIcon} />
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            }
+            {
+                (loading && showHospital) ?
                     <ActivityIndicator color='#01C397' size='large' style={{ flex: 1 }} />
                     :
                     <ScrollView>
@@ -265,7 +233,8 @@ const styles = StyleSheet.create({
     listTitle: {
         marginLeft: 10,
         fontSize: 17,
-        color: '#01C397'
+        color: '#01C397',
+        textTransform:'capitalize'
     },
     arrowIcon: {
         fontSize: 20,

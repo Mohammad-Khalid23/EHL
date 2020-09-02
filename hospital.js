@@ -170,4 +170,6 @@ exports.hospitals = [
         lat:24.9223603,
         lng:67.0862397
     },
-]
+];
+
+exports.zones = ['orangi town','nazimabad','gulshan e iqbal','sadar','bahadurabad','kareemabad']
