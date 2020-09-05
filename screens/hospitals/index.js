@@ -34,7 +34,7 @@ const Hospitals = (props) => {
             if (a.name < b.name) {
                 return -1;
             }
-            if (b.name > a.name) {
+            if (b.name> a.name) {
                 return 1;
             }
             return 0;
@@ -44,10 +44,13 @@ const Hospitals = (props) => {
 
     const filterZone = (text) => {
         console.log('tetx', text)
+        const myList = zones.filter(randomSearch)
+        console.log("My list ---->",myList);
         setShowZone(true)
         if (text) {
             let filteredZone = zones.filter(data => {
-                if (data.toLowerCase().includes(text.toLowerCase()) === true) return data;
+                // if (data.toLowerCase().includes(text.toLowerCase()) === true) return data;
+                return data.toLowerCase().startsWith(text.toLowerCase())
             });
             filteredZone = filteredZone.sort(function (a, b) {
                 if (a < b) {
@@ -90,6 +93,10 @@ const Hospitals = (props) => {
         props.navigation.push('Details', { details: data })
     }
 
+    const randomSearch = (zone) => {
+        return zone.search(state.search) >= 0 || zone.search((state.search).toLowerCase) >= 0;
+    }
+
     // const list = state.filteredHospitals.length > 0 ? state.filteredHospitals : sortList(hospitals);
     const list = state.filteredHospitals;
 
@@ -130,7 +137,7 @@ const Hospitals = (props) => {
                 value={state.seletedHospital ? state.seletedHospital : state.search}
                 onClear={() => setState({ ...state, search: '', filteredHospitals: [], filteredZone: [] })}
                 inputContainerStyle={{ backgroundColor: '#2d3436' }}
-                onSubmitEditing={() => searchHospital()}
+                onSubmitEditing={() => filterZone(text)}
                 inputStyle={{ color: '#01C397' }}
                 containerStyle={{ backgroundColor: '#2d3436', borderColor: 'red', padding: 0, borderRadius: 0 }}
             />
@@ -233,8 +240,7 @@ const styles = StyleSheet.create({
     listTitle: {
         marginLeft: 10,
         fontSize: 17,
-        color: '#01C397',
-        textTransform:'capitalize'
+        color: '#01C397'
     },
     arrowIcon: {
         fontSize: 20,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text, Linking, Platform, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text,ScrollView, Linking, Platform, ActivityIndicator } from 'react-native';
 import { Header, ListItem, Avatar, Button } from 'react-native-elements'
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
@@ -19,6 +19,7 @@ const Details = (props) => {
 
 
     const details = props.route.params ? props.route.params.details : null;
+    console.log('======>Details',details);
 
     useEffect(() => {
         setLoader(true);
@@ -59,15 +60,19 @@ const Details = (props) => {
                     <ActivityIndicator color='#01C397' size='large' style={{ flex: 1 }} />
                     :
 
-                    <View>
+                    <ScrollView>
                         <Text style={styles.hospitalName}>{details ? details.name : ''}</Text>
                         <View style={styles.listView}>
                             <Text style={styles.listText}>No. of Beds :</Text>
-                            <Text style={styles.listText}>4</Text>
+                            <Text style={styles.listText}>{details ? details.bed : ''}</Text>
                         </View>
                         <View style={styles.listView}>
                             <Text style={styles.listText}>No. of Ventilators :</Text>
-                            <Text style={styles.listText}>4</Text>
+                            <Text style={styles.listText}>{details ? details.ventilator : ''}</Text>
+                        </View>
+                        <View style={styles.listView}>
+                            <Text style={styles.listText}>Estimated Distance :</Text>
+                            <Text style={styles.listText}>{details ? details.distance : ''}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 10 }}>
                             <Text style={[styles.listText, { marginTop: 10 }]}>Contact : {details ? details.phone : ''}</Text>
@@ -114,7 +119,7 @@ const Details = (props) => {
                                 />
                             </View>
                         </View>
-                    </View>
+                    </ScrollView>
             }
         </View>
     );
@@ -191,7 +196,7 @@ const styles = StyleSheet.create({
         borderColor: '#01C397'
     },
     mapStyle: {
-        height: 380,
+        height: 350,
         width: 380,
         borderColor: '#F6820D',
         borderWidth: 2,

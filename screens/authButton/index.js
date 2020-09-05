@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import FIcon from 'react-native-vector-icons/FontAwesome';
 import Logo2 from '../../assets/EHL.png';
 
 const { width } = Dimensions.get('window');
@@ -10,6 +11,7 @@ export default function AuthButtons(props) {
         <View style={styles.buttonsView}>
 
             <View style={styles.brandView2}>
+            <FIcon name='hospital-o' style={styles.hospitalIcon} />
                 <Image style={{ width: 150, height: 50 }} source={Logo2} />
             <Text style={[styles.buttonsText, { fontWeight: 'bold', fontSize: 16 }]}>Emergency Hospital Locator</Text>
             </View>
@@ -66,9 +68,14 @@ const styles = StyleSheet.create({
 
     brandView2: {
         width: '100%',
-        height: 45,
+        height: 75,
         marginBottom: 5,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    hospitalIcon: {
+        fontSize: 40,
+        color: '#01C397',
+        // marginLeft: 10
     }
 });

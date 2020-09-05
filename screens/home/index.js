@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, ScrollView, ActivityIndicator, FlatList } from 'react-native';
 import { Header, ListItem, Avatar } from 'react-native-elements'
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
@@ -9,6 +9,7 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import { SliderBox } from "react-native-image-slider-box";
 
 const Home = (props) => {
     const [loading, setLoader] = useState(false);
@@ -26,10 +27,6 @@ const Home = (props) => {
     }
 
     const list = [
-        {
-            name: 'Ambulance',
-            icon:<MIcon style={styles.hospitalIcon} name='ambulance'/>
-        },
         {
             name: 'Accident',
             icon:<MaterialIcon style={styles.hospitalIcon} name='local-hospital'/>
@@ -61,9 +58,21 @@ const Home = (props) => {
         {
             name: 'Ventilator',
             icon:<MaterialIcon style={styles.hospitalIcon} name='local-hospital'/>
-        } 
+        },
+        {
+            name: 'Ambulance',
+            icon:<MIcon style={styles.hospitalIcon} name='ambulance'/>
+        }
       ];
 
+      const images = [
+        require('../../assets/ambulance.jpg'),
+        require('../../assets/vent.jpg'),
+        require('../../assets/heart.jpg'),
+        require('../../assets/hospital.webp'),
+        require('../../assets/covid.webp'),
+        require('../../assets/blood.webp'),
+      ]
     const navigate = (data) => {
         if (data.name === 'Ambulance') {
             props.navigation.push('Ambulance')
@@ -71,6 +80,71 @@ const Home = (props) => {
             props.navigation.push('Hospitals')
         }
     }
+
+    const keyExtractor = (item, index) => index.toString()
+
+    const renderItem = ({ item }) => (
+       <TouchableOpacity onPress={() => navigate(item)} style={styles.listItem}>
+            <View style={{ flexDirection: 'column', alignItems: 'center',marginTop:15 }}>
+                {item.icon}
+                <Text style={styles.listTitle}>{item.name}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+
+
+
+
+
+
+
+
+
+
+
+
+    // Convert Degress to Radians
+    const Deg2Rad = (deg) => {
+    return deg * Math.PI / 180;
+  }
+  
+  const PythagorasEquirectangular = ( lat1, lon1, lat2, lon2 ) => {
+    lat1 = Deg2Rad(lat1);
+    lat2 = Deg2Rad(lat2);
+    lon1 = Deg2Rad(lon1);
+    lon2 = Deg2Rad(lon2);
+    var R = 6371; // km
+    var x = (lon2-lon1) * Math.cos((lat1+lat2)/2);
+    var y = (lat2-lat1);
+    var d = Math.sqrt(x*x + y*y) * R;
+    return d;
+  }
+  
+    const NearestCity = (latitude, longitude, locations) => {
+    var mindif=999999;
+    var closest;
+  
+    for (let index = 0; index < locations.length; ++index) {
+      var dif =  PythagorasEquirectangular(latitude, longitude, locations[ index ][ 1 ], locations[ index ][ 2 ]);
+      if ( dif < mindif ) {
+        closest=index;
+        mindif = dif;
+      }
+    }
+  
+    // return the nearest location
+    var closestLocation = (locations[ closest ]);
+    console.log('The closest location is ' + closestLocation);
+    return closestLocation;
+  }
+
+  const test = [
+      ['Liaquat',24.8922332,67.0661758],
+      ['AKUH',24.8935812,67.0690012],
+      ['Hill',24.8740019,67.0714373],
+  ];
+
+  NearestCity(24.8922812,67.0661058,test);
     return (
         <View style={styles.formView}>
             <Header
@@ -78,7 +152,6 @@ const Home = (props) => {
                     <AntIcon name='logout' color='white' style={styles.logoutFont} />
                 </TouchableOpacity>}
                 centerComponent={<Text style={styles.titleStye}>Emergency Hospital Locator</Text>}
-                // centerComponent={{ text: 'Emergency Hospital Locator', style: styles.titleStye }}
                 rightComponent={<View style={styles.rightComponentView}>
                     <FIcon name='eye' color='white' style={styles.eyeFont} />
                     <Text style={styles.countText}>{props.count}</Text>
@@ -90,18 +163,37 @@ const Home = (props) => {
                     <ActivityIndicator color='#01C397' size='large' style={{ flex: 1 }} />
                     :
                     <ScrollView>
-                        {
-                            list.map((l, i) => (
-                                <TouchableOpacity onPress={() => navigate(l)} key={i} style={styles.listItem}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
-                                        {l.icon}
-                                        <Text style={styles.listTitle}>{l.name}</Text>
-                                    </View>
-                                    <SimpleIcon name='arrow-right' style={styles.arrowIcon} />
-                                </TouchableOpacity>
-                            ))
-                        }
+                        <SliderBox 
+
+                            images={images}
+                            autoplay
+                            circleLoop
+                            ImageComponentStyle={{width: '100%'}}
+                            imageLoadingColor="#01C397"
+                            resizeMethod={'resize'}
+                            // resizeMode={'contain'}
+                        />
+                        <FlatList
+                            numColumns={2}
+                            keyExtractor={keyExtractor}
+                            data={list}
+                            renderItem={renderItem}
+                            columnWrapperStyle={{ justifyContent: 'space-around' }}
+                        />
                     </ScrollView>
+                    // <ScrollView>
+                    //     {
+                    //         list.map((l, i) => (
+                    //             <TouchableOpacity onPress={() => navigate(l)} key={i} style={styles.listItem}>
+                    //                 <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
+                    //                     {l.icon}
+                    //                     <Text style={styles.listTitle}>{l.name}</Text>
+                    //                 </View>
+                    //                 <SimpleIcon name='arrow-right' style={styles.arrowIcon} />
+                    //             </TouchableOpacity>
+                    //         ))
+                    //     }
+                    // </ScrollView>
             }
         </View>
     );
@@ -161,12 +253,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     listItem: {
-        borderBottomWidth: 1,
+        // borderBottomWidth: 1,
         height: 100,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottomColor:'#dfe6e9'
+        width:'45%',
+        borderColor:'#dfe6e9',
+        marginTop:15,
+        borderRadius:10,
+        borderWidth:1
     },
     listTitle:{
         marginLeft: 10,
