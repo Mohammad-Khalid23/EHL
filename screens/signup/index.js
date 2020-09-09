@@ -14,6 +14,8 @@ function Signup(props) {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState('');
     const [check, setCheck] = useState(false);
     const [loader, setLoader] = useState(false);
     const [isSignup, setSignup] = useState(false);
@@ -62,13 +64,15 @@ function Signup(props) {
         setUsername('');
         setEmail('');
         setPassword('');
+        setPhone('');
+        setAddress('');
         setCheck(false);
         setSignup(false);
     }
 
     return (
         <View style={styles.formView}>
-            <Heading title={'Sign up'} _OnPress={() => props.navigation.navigate('Auth')} />
+            <Heading title={'Sign up'} _OnPress={() => props.navigation.navigate('Signin')} />
             <View style={{ marginTop: 15, width: width - 26, marginHorizontal: 13 }}>
                 <TextField password={false} value={username} title={'Name'} onChange={(text) => setUsername(text)} />
                 <TextField password={false} value={email} title={'Email'} onChange={(text) => setEmail(text)} />
@@ -76,10 +80,13 @@ function Signup(props) {
                 <View>
                     <Text style={{ fontSize: 12, color: '#4a4a4a', marginVertical: 2 }}>{"Must contain 8 character or more"}</Text>
                 </View>
+                <TextField password={false} value={phone} title={'Phone'} onChange={(text) => setPhone(text)} />
+                <TextField password={false} value={address} title={'Address'} onChange={(text) => setAddress(text)} />
+                
                 <TouchableOpacity
                     onPress={_signup}
-                    disabled={!email || !username || !password || (password && password.length < 8) || loader ? true : false}
-                    style={[styles.buttonOpacity, { backgroundColor: email && username && password && (password && password.length >= 8) ? "#01c397" : "#E5E5E5" }]}
+                    disabled={!email || !username || !password || !phone || !address || (password && password.length < 8) || loader ? true : false}
+                    style={[styles.buttonOpacity, { backgroundColor: email && username && password && phone && address && (password && password.length >= 8) ? "#01c397" : "#E5E5E5" }]}
                 >
                     {
                         !loader ?
@@ -88,28 +95,6 @@ function Signup(props) {
                             <ActivityIndicator size={'large'} color={'#FFF'} />
                     }
                 </TouchableOpacity>
-
-                {/* <View style={{ marginTop: 5, flexDirection: 'row' }}>
-                    <View style={{ width: width - 80 }}>
-                        <Text style={[{ color: '#4a4a4a', fontWeight: '500', fontSize: 14 }]}>
-                            Accept flaipro's terms, conditions and privacy policy.
-                            View <Text style={{ color: '#01c397' }} onPress={() => props.navigation.navigate('Privacy')}>{" xeool's "}</Text> terms, conditions and private policy.
-                        </Text>
-                    </View>
-
-                    <View style={{ width: 54, alignItems: 'flex-end' }}>
-                        <View style={{ width: 26, height: 26, borderRadius: 26 / 2, borderWidth: 2, borderColor: check ? "#01c397" : "#E5E5E5", justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
-                            <RoundCheckbox
-                                size={24}
-                                checked={check}
-                                onValueChange={(value) => setCheck(value)}
-                                borderColor={"#FFFFFF"}
-                                backgroundColor={'#FFFFFF'}
-                                iconColor={'#01c397'}
-                            />
-                        </View>
-                    </View>
-                </View> */}
             </View>
             <Modal isVisible={isSignup}>
                 <View style={{ width: '100%', height: height, justifyContent: 'center', alignItems: 'center' }}>

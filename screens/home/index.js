@@ -23,7 +23,7 @@ const Home = (props) => {
 
     const logout = async () => {
         await props.actions._logout();
-        props.navigation.navigate('Auth');
+        props.navigation.navigate('Signin');
     }
 
     const list = [
@@ -66,8 +66,6 @@ const Home = (props) => {
       ];
 
       const images = [
-        require('../../assets/ambulance.jpg'),
-        require('../../assets/vent.jpg'),
         require('../../assets/heart.jpg'),
         require('../../assets/hospital.webp'),
         require('../../assets/covid.webp'),
@@ -91,17 +89,6 @@ const Home = (props) => {
             </View>
         </TouchableOpacity>
     );
-
-
-
-
-
-
-
-
-
-
-
 
     // Convert Degress to Radians
     const Deg2Rad = (deg) => {

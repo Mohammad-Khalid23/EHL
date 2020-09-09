@@ -1,9 +1,8 @@
 {
   "expo": {
-    "name": "EHL Emergency Hospital Locator",
+    "name": "EHL",
     "slug": "EHL",
     "privacy": "public",
-    "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
       "android",
@@ -13,7 +12,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/EHL.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#FFFFFF"
     },
@@ -32,6 +31,6 @@
       "package": "com.ehl",
       "versionCode": 1
     },
-    "description": "EHL first build"
+    "description": "EHL first build v6"
   }
 }

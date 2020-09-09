@@ -137,7 +137,7 @@ const Hospitals = (props) => {
                 value={state.seletedHospital ? state.seletedHospital : state.search}
                 onClear={() => setState({ ...state, search: '', filteredHospitals: [], filteredZone: [] })}
                 inputContainerStyle={{ backgroundColor: '#2d3436' }}
-                onSubmitEditing={() => filterZone(text)}
+                // onSubmitEditing={() => filterZone(text)}
                 inputStyle={{ color: '#01C397' }}
                 containerStyle={{ backgroundColor: '#2d3436', borderColor: 'red', padding: 0, borderRadius: 0 }}
             />

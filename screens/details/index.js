@@ -7,7 +7,7 @@ import { login, viewCounter, logout } from '../../store/actions/auth';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import FontIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MapView from 'react-native-maps'
+import MapView ,{ PROVIDER_GOOGLE } from 'react-native-maps'
 
 const Details = (props) => {
     const [loading, setLoader] = useState(false);
@@ -27,8 +27,13 @@ const Details = (props) => {
             setLoader(false);
         }, 1500)
     }, [])
-    const navigate = () => {
-        props.navigation.push('Ambulance')
+    const navigate = (route) => {
+        if(route === 'Tracking'){
+            const randomKm = Math.floor(Math.random() * 4) + 1
+            props.navigation.push(route, { km: randomKm })
+        }else{
+            props.navigation.push(route)
+        }
     }
 
 
@@ -83,6 +88,7 @@ const Details = (props) => {
                         <View>
                             < MapView
                                 style={styles.mapStyle}
+                                provider={PROVIDER_GOOGLE}
                                 region={
                                     {
                                         latitude: details ? details.lat : 0,
@@ -94,18 +100,21 @@ const Details = (props) => {
                                 }
                                 onLayout={() => { onMapLayout() }}
                             >
-                                <MapView.Marker
-                                    coordinate={
-                                        {
-                                            latitude: details ? details.lat : 0,
-                                            longitude: details ? details.lng : 0,
+                                {
+                                    state.isMapReady &&
+                                    <MapView.Marker
+                                        coordinate={
+                                            {
+                                                latitude: details ? details.lat : 0,
+                                                longitude: details ? details.lng : 0,
+                                            }
                                         }
-                                    }
-                                />
+                                    />
+                                }
                             </MapView >
                             <View>
                                 <Button
-                                    onPress={() => navigate()}
+                                    onPress={() => navigate('Ambulance')}
                                     buttonStyle={{ backgroundColor: '#01C397' }}
                                     icon={
                                         <FontIcon
@@ -116,6 +125,21 @@ const Details = (props) => {
                                         />
                                     }
                                     title="Call Ambulance"
+                                />
+                            </View>
+                            <View style={{marginTop:2}}>
+                                <Button
+                                    onPress={() => navigate('Tracking')}
+                                    buttonStyle={{ backgroundColor: '#01C397' }}
+                                    icon={
+                                        <FontIcon
+                                            name="ambulance"
+                                            size={25}
+                                            color="white"
+                                            style={{ marginRight: 10 }}
+                                        />
+                                    }
+                                    title="Track Your Ambulance"
                                 />
                             </View>
                         </View>
